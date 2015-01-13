@@ -1,17 +1,16 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Aladdin.IOC
 {
 	class InjectionPointMethod : IInjectionPoint
 	{
 		readonly MethodInfo method;
-		readonly Type[] argTypes;
+		readonly ParameterInfo[] paramList;
 
 		public InjectionPointMethod(MethodInfo method)
 		{
 			this.method = method;
-			this.argTypes = getArgTypes();
+			this.paramList = method.GetParameters();
 		}
 
 		public void injectInto(object target, Injector injector)
@@ -19,22 +18,11 @@ namespace Aladdin.IOC
 			method.Invoke(target, getInstances(injector));
 		}
 
-		Type[] getArgTypes()
-		{
-			var paramList = method.GetParameters();
-			var result = new Type[paramList.Length];
-			foreach(var paramInfo in paramList){
-				argTypes[paramInfo.Position] = paramInfo.ParameterType;
-			}
-			return result;
-		}
-
 		object[] getInstances(Injector injector)
 		{
-			int count = argTypes.Length;
-			var result = new object[count];
-			for(int i = 0; i < count; ++i){
-				result[i] = injector.getInstance(argTypes[i]);
+			var result = new object[paramList.Length];
+			foreach(var paramInfo in paramList){
+				result[paramInfo.Position] = injector.getInstance(paramInfo.ParameterType);
 			}
 			return result;
 		}
