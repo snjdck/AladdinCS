@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aladdin", "Aladdin\Aladdin.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aladdin-IOC", "Aladdin-IOC\Aladdin-IOC.csproj", "{50B69470-94CD-49F3-9B46-8E407833CCFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aladdin-Astar", "Aladdin-Astar\Aladdin-Astar.csproj", "{B539B495-13A4-4430-8CDA-D03CD926EAED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{50B69470-94CD-49F3-9B46-8E407833CCFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50B69470-94CD-49F3-9B46-8E407833CCFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50B69470-94CD-49F3-9B46-8E407833CCFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B539B495-13A4-4430-8CDA-D03CD926EAED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B539B495-13A4-4430-8CDA-D03CD926EAED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B539B495-13A4-4430-8CDA-D03CD926EAED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B539B495-13A4-4430-8CDA-D03CD926EAED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
