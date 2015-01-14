@@ -34,10 +34,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Astar\AStar.cs" />
-    <Compile Include="Astar\AStarGridNode.cs" />
-    <Compile Include="Astar\BinHeap.cs" />
-    <Compile Include="Astar\IAstarNode.cs" />
+    <Compile Include="PathFinding\AStar.cs" />
+    <Compile Include="PathFinding\AStarGridNode.cs" />
+    <Compile Include="PathFinding\BinHeap.cs" />
+    <Compile Include="PathFinding\IAstarNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
