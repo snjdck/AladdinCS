@@ -13,37 +13,37 @@ namespace Aladdin.IOC
 		    dict = new Dictionary<string, IInjectionType>();
 	    }
 
-		public void mapValue<T>(T value, string id=null, bool needInject=true)
+		public void mapValue<T>(T value, string id=null, bool needInject=true) where T : class
 		{
 			mapRule<T>(new InjectionTypeValue(value, needInject), id);
 		}
 
-		public void mapClass<K, V>(string id=null) where V : K, new()
+		public void mapClass<K, V>(string id=null) where K : class where V : K, new()
 		{
 			mapRule<K>(new InjectionTypeClass(typeof(V)), id);
 		}
 
-		public void mapClass<T>(string id = null) where T : new()
+		public void mapClass<T>(string id = null) where T : class, new()
 		{
 			mapClass<T, T>(id);
 		}
 
-		public void mapSingleton<K, V>(string id=null) where V : K, new()
+		public void mapSingleton<K, V>(string id=null) where K : class where V : K, new()
 		{
 			mapRule<K>(new InjectionTypeSingleton(typeof(V)), id);
 		}
 
-		public void mapSingleton<T>(string id=null) where T : new()
+		public void mapSingleton<T>(string id=null) where T : class, new()
 		{
 			mapSingleton<T, T>(id);
 		}
 
-		public void mapRule<T>(IInjectionType rule, string id=null)
+		public void mapRule<T>(IInjectionType rule, string id=null) where T : class
 		{
 			dict.Add(getKey(typeof(T), id), rule);
 		}
 
-		public void unmap<T>(string id=null)
+		public void unmap<T>(string id=null) where T : class
 		{
 			dict.Remove(getKey(typeof(T), id));
 		}
