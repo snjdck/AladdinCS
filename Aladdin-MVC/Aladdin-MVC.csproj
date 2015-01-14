@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Aladdin_MVC</RootNamespace>
     <AssemblyName>Aladdin-MVC</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,7 +35,27 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MVC\Application.cs" />
+    <Compile Include="MVC\Kernel\IController.cs" />
+    <Compile Include="MVC\Kernel\IModel.cs" />
+    <Compile Include="MVC\Kernel\INotifier.cs" />
+    <Compile Include="MVC\Kernel\IView.cs" />
+    <Compile Include="MVC\Module.cs" />
+    <Compile Include="MVC\Service\ServiceInitializer.cs" />
+    <Compile Include="MVC\Service\ServiceRegInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aladdin-IOC\Aladdin-IOC.csproj">
+      <Project>{50b69470-94cd-49f3-9b46-8e407833ccfa}</Project>
+      <Name>Aladdin-IOC</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MVC\Controller\" />
+    <Folder Include="MVC\Model\" />
+    <Folder Include="MVC\Notification\" />
+    <Folder Include="MVC\View\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
