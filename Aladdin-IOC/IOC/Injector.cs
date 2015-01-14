@@ -15,12 +15,17 @@ namespace Aladdin.IOC
 
 		public void mapValue<T>(T value, string id=null, bool needInject=true) where T : class
 		{
-			mapRule<T>(new InjectionTypeValue(value, needInject), id);
+			mapValue(typeof(T), value, id, needInject);
+		}
+
+		public void mapValue(Type keyType, object value, string id=null, bool needInject=true)
+		{
+			mapRule(keyType, new InjectionTypeValue(value, needInject), id);
 		}
 
 		public void mapClass<K, V>(string id=null) where K : class where V : K, new()
 		{
-			mapRule<K>(new InjectionTypeClass(typeof(V)), id);
+			mapRule(typeof(K), new InjectionTypeClass(typeof(V)), id);
 		}
 
 		public void mapClass<T>(string id = null) where T : class, new()
@@ -30,7 +35,7 @@ namespace Aladdin.IOC
 
 		public void mapSingleton<K, V>(string id=null) where K : class where V : K, new()
 		{
-			mapRule<K>(new InjectionTypeSingleton(typeof(V)), id);
+			mapRule(typeof(K), new InjectionTypeSingleton(typeof(V)), id);
 		}
 
 		public void mapSingleton<T>(string id=null) where T : class, new()
@@ -38,14 +43,14 @@ namespace Aladdin.IOC
 			mapSingleton<T, T>(id);
 		}
 
-		public void mapRule<T>(IInjectionType rule, string id=null) where T : class
+		public void mapRule(Type keyType, IInjectionType rule, string id=null)
 		{
-			dict.Add(getKey(typeof(T), id), rule);
+			dict.Add(getKey(keyType, id), rule);
 		}
 
-		public void unmap<T>(string id=null) where T : class
+		public void unmap(Type keyType, string id=null)
 		{
-			dict.Remove(getKey(typeof(T), id));
+			dict.Remove(getKey(keyType, id));
 		}
 
 		public object getInstance(Type type, string id=null)
