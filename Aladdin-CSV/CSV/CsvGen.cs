@@ -37,6 +37,14 @@ namespace Aladdin.CSV
 
 			compileUnit.Namespaces.Add(name);
 			GenerateCode(compileUnit, "test.cs");
+			var res = CompileCode("test.cs");
+			if(res.NativeCompilerReturnValue > 0){
+				foreach(var err in res.Errors){
+					Console.Out.WriteLine(err.ToString());
+				}
+			}
+	
+
 		}
 
 		static void GenerateCode(CodeCompileUnit compileUnit, string fileName)
@@ -50,14 +58,13 @@ namespace Aladdin.CSV
 		static CompilerResults CompileCode(string fileName)
 		{
 			var provider = new CSharpCodeProvider();
-			var compiler = provider.CreateCompiler();
 			//编译参数
 			CompilerParameters cp = new CompilerParameters(
-				new string[] { "System.dll" }, fileName, false
+				new string[] { "System.dll","System.Core.dll" }, fileName + ".dll", false
 			);
-			cp.GenerateExecutable = true;//生成EXE,不是DLL
+			//cp.GenerateExecutable = true;//生成EXE,不是DLL
 
-			CompilerResults cr = compiler.CompileAssemblyFromFile(cp, fileName);
+			CompilerResults cr = provider.CompileAssemblyFromFile(cp, fileName);
 			return cr;
 		}
 
@@ -114,6 +121,22 @@ namespace Aladdin.CSV
 				return "FindBy" + name;
 			}
 		}
+
+		public string arrayType
+		{
+			get
+			{
+				return type + "[]";
+			}
+		}
+
+		public string listType
+		{
+			get
+			{
+				return string.Format("List<{0}>", type);
+			}
+		}
 	}
 
 	class Test2
@@ -151,7 +174,8 @@ namespace Aladdin.CSV
 	class DataClass : CodeTypeDeclaration
 	{
 		CodeConstructor constructor;
-		public DataClass(string className) : base(className)
+		public DataClass(string className)
+			: base(className)
 		{
 			constructor = new CodeConstructor();
 			constructor.Attributes = MemberAttributes.Public;
@@ -174,6 +198,7 @@ namespace Aladdin.CSV
 			var fieldCodeRef = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), field.fieldName);
 
 			var property = CreateProperty(field.name);
+			CodeExpression initExpress;
 			string fieldType;
 			if(field.isRef) {
 				/*
@@ -182,53 +207,83 @@ namespace Aladdin.CSV
 				}*/
 				var typeInfo = fileDict[field.type];
 				var refInfo = typeInfo.propDict[field.refName];
-				fieldType = refInfo.type;
-				property.Type = new CodeTypeReference(field.type);
-				property.GetStatements.Add(new CodeMethodReturnStatement(
-					new CodeMethodInvokeExpression(
+				
+
+				if(refInfo.isRef){
+					if(Name != refInfo.type){
+						throw new Exception("ref error");
+					}
+					fieldType = field.arrayType;
+					property.Type = new CodeTypeReference(field.arrayType);
+					initExpress = new CodePrimitiveExpression(null);
+					property.GetStatements.Add(
+						new CodeConditionStatement(
+							new CodeBinaryOperatorExpression(fieldCodeRef, CodeBinaryOperatorType.IdentityEquality, new CodePrimitiveExpression(null)),
+							new CodeVariableDeclarationStatement("var", "itemList", new CodeObjectCreateExpression(field.listType)),
+							new CodeIterationStatement(
+								new CodeVariableDeclarationStatement("int", "i", new CodeSnippetExpression(string.Format("{0}.ALL.Count", typeInfo.tableName))),
+								new CodeSnippetExpression("i >= 0"),
+								new CodeSnippetStatement("--i"),
+								new CodeVariableDeclarationStatement("var", "item", new CodeSnippetExpression(string.Format("{0}.ALL[i]", typeInfo.tableName))),
+								new CodeConditionStatement(
+									new CodeSnippetExpression(string.Format("ReferenceEquals(this, item.{0})", field.refName)),
+									new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeVariableReferenceExpression("itemList"), "Add", new CodeVariableReferenceExpression("item")))
+								)
+							),
+							new CodeAssignStatement(fieldCodeRef, new CodeMethodInvokeExpression(new CodeVariableReferenceExpression("itemList"), "ToArray"))
+						)
+					);
+					property.GetStatements.Add(new CodeMethodReturnStatement(fieldCodeRef));
+				} else if(refInfo.isUnique) {
+					fieldType = refInfo.type;
+					property.Type = new CodeTypeReference(field.type);
+					property.GetStatements.Add(new CodeMethodReturnStatement(new CodeMethodInvokeExpression(
 						new CodeTypeReferenceExpression(typeInfo.tableName),
 						refInfo.findBy,
 						fieldCodeRef
-					)
-				));
+					)));
+					initExpress = new CodeSnippetExpression(AssignInit(field, fieldType));
+				} else {
+					throw new Exception("parse error");
+				}
 			} else {
 				fieldType = field.type;
 				property.Type = new CodeTypeReference(field.type);
 				property.GetStatements.Add(new CodeMethodReturnStatement(fieldCodeRef));
+				initExpress = new CodeSnippetExpression(AssignInit(field, fieldType));
 			}
-
 			Members.Add(new CodeMemberField(fieldType, field.fieldName));
-			constructor.Statements.Add(AssignInit(fieldCodeRef, field.index, fieldType));
+			constructor.Statements.Add(new CodeAssignStatement(fieldCodeRef, initExpress));
 		}
 
-		static CodeStatement AssignInit(CodeExpression fieldCodeRef, int fieldIndex, string fieldType)
+		static string AssignInit(Test1 field, string fieldType)
 		{
-			var valueToAssign = new CodeIndexerExpression(
-				new CodeVariableReferenceExpression("itemList"),
-				new CodePrimitiveExpression(fieldIndex)
-			);
-			if(fieldType == "int") {
-				return GetConditionStatement(fieldCodeRef, valueToAssign, fieldType, 0);
+			var assign = string.Format("itemList[{0}]", field.index);
+			string defaultValue = null;
+			if(GetDefaultValue(fieldType, ref defaultValue)) {
+				return string.Format("string.IsNullOrEmpty({0}) ? {2} : {1}.Parse({0})", assign, fieldType, defaultValue);
 			}
-			if(fieldType == "float") {
-				return GetConditionStatement(fieldCodeRef, valueToAssign, fieldType, 0f);
-			}
-			if(fieldType == "bool") {
-				return GetConditionStatement(fieldCodeRef, valueToAssign, fieldType, false);
-			}
-			return new CodeAssignStatement(fieldCodeRef, valueToAssign);
+			return assign;
 		}
 
-		static CodeStatement GetConditionStatement(CodeExpression fieldCodeRef, CodeExpression valueToAssign, string fieldType, object defaultValue)
+		static bool GetDefaultValue(string type, ref string defaultValue)
 		{
-			var result = new CodeConditionStatement(new CodeMethodInvokeExpression(
-				new CodeTypeReferenceExpression("string"), "IsNullOrEmpty", valueToAssign
-			));
-			result.TrueStatements.Add(new CodeAssignStatement(fieldCodeRef, new CodePrimitiveExpression(defaultValue)));
-			result.FalseStatements.Add(new CodeAssignStatement(fieldCodeRef, new CodeMethodInvokeExpression(
-				new CodeTypeReferenceExpression(fieldType), "Parse", valueToAssign
-			)));
-			return result;
+			bool isString = true;
+			switch(type) {
+				case "int":
+					defaultValue = "0";
+					break;
+				case "float":
+					defaultValue = "0f";
+					break;
+				case "bool":
+					defaultValue = "false";
+					break;
+				default:
+					isString = false;
+					break;
+			}
+			return isString;
 		}
 	}
 
@@ -242,6 +297,12 @@ namespace Aladdin.CSV
 
 			methodAdd = new CodeMemberMethod2("Add", true, true);
 			methodAdd.Parameters.Add(new CodeParameterDeclarationExpression(itemClassName, "item"));
+			methodAdd.Statements.Add(new CodeExpressionStatement(
+				new CodeMethodInvokeExpression(
+					new CodeVariableReferenceExpression("ALL"), "Add",
+					new CodeVariableReferenceExpression("item")
+				)
+			));
 			Members.Add(methodAdd);
 
 			var methodRegister = new CodeMemberMethod2("Register", true, true);
@@ -261,15 +322,14 @@ namespace Aladdin.CSV
 						new CodeVariableReferenceExpression("i"))
 			))));
 			Members.Add(methodRegister);
+
+			CreateField(string.Format("List<{0}>", itemClassName), "ALL", true);
 		}
 
 		public void RegUniqueField(Test1 field)
 		{
 			var dictType = string.Format("Dictionary<object, {0}>", itemClassName);
-			var dictField = new CodeMemberField(dictType, field.dictName);
-			dictField.Attributes = MemberAttributes.Static;
-			dictField.InitExpression = new CodeObjectCreateExpression(dictType);
-			Members.Add(dictField);
+			CreateField(dictType, field.dictName, false);
 
 			var dictRef = new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(Name), field.dictName);
 			var itemRef = new CodeVariableReferenceExpression("item");
@@ -286,6 +346,18 @@ namespace Aladdin.CSV
 				new CodeIndexerExpression(dictRef, new CodePropertyReferenceExpression(itemRef, field.name)),
 				itemRef
 			));
+		}
+
+		public void CreateField(string type, string name, bool isPublic)
+		{
+			var field = new CodeMemberField(type, name);
+			if(isPublic){
+				field.Attributes = MemberAttributes.Static | MemberAttributes.Public;
+			} else {
+				field.Attributes = MemberAttributes.Static;
+			}
+			field.InitExpression = new CodeObjectCreateExpression(type);
+			Members.Add(field);
 		}
 	}
 
