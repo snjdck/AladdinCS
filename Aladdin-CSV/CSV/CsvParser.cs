@@ -5,9 +5,9 @@ namespace Aladdin.CSV
 {
 	static public class CsvParser
 	{
-		static public Dictionary<object, T> Parse<T>(string content)
+		static public List<T> Parse<T>(string content)
 		{
-			var result = new Dictionary<object, T>();
+			var result = new List<T>();
 			string[] lineList = content.Split('\n');
 			int keyCount = lineList[0].Split(',').Length;
 			for(int i=3, n=lineList.Length; i<n; ++i)
@@ -17,12 +17,11 @@ namespace Aladdin.CSV
 					continue;
 				}
 				var itemList = ParseLine(line, keyCount);
-				string itemId = itemList[0];
-				if (string.IsNullOrEmpty(itemId)){
+				if (string.IsNullOrEmpty(itemList[0])){
 					continue;
 				}
 				T record = (T)Activator.CreateInstance(typeof(T), itemList);
-				result[int.Parse(itemId)] = record;
+				result.Add(record);
 			}
 			return result;
 		}
@@ -39,6 +38,9 @@ namespace Aladdin.CSV
 
 		static string ReadItem(string content, ref int charIndex)
 		{
+			if(charIndex >= content.Length){
+				return null;
+			}
 			char firstChar = content[charIndex];
 			if (firstChar == ','){
 				++charIndex;
