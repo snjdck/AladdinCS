@@ -10,7 +10,7 @@ namespace Aladdin.MVC
 
 		public bool notify(Enum msgName, object msgData = null)
 		{
-			module.notifyImpl(new Msg(msgName, msgData, this));
+			return module.notifyImpl(new Msg(msgName, msgData, this));
 		}
 
 		abstract protected internal void onReg();

@@ -4,7 +4,7 @@ using Aladdin.IOC;
 
 namespace Aladdin.MVC
 {
-	sealed class Controller
+	sealed class Controller : IController
 	{
 		[Inject]
 		private Injector injector;
@@ -31,12 +31,16 @@ namespace Aladdin.MVC
 			return cmdRefs.ContainsKey(msgName.GetFullName());
 		}
 
-		public void execCmd(Msg msg)
+		internal void execCmd(Msg msg)
 		{
 			if(msg.isProcessCanceled()){
 				return;
 			}
 			var cmd = cmdRefs[msg.name.GetFullName()];
+			if(!cmd.hasInject){
+				injector.injectInto(cmd);
+				cmd.hasInject = true;
+			}
 			cmd.exec(msg);
 		}
 	}

@@ -1,4 +1,7 @@
-﻿namespace Aladdin.MVC
+﻿using System;
+using UnityEngine;
+
+namespace Aladdin.MVC
 {
 	interface IView
 	{
@@ -6,6 +9,6 @@
 		void delMediator(Mediator mediator);
 		bool hasMediator(Mediator mediator);
 
-		void mapView();
+		void mapView(GameObject go, Type mediatorType);
 	}
 }

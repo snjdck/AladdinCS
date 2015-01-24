@@ -13,11 +13,11 @@ namespace Aladdin.MVC
 		[Inject]
 		protected object contextView;
 
-		public bool notify()
-		{
-			//module.notifyImp();
-		}
-
 		abstract public void exec(Msg msg);
+
+		public bool notify(Enum msgName, object msgData=null)
+		{
+			return module.notifyImpl(new Msg(msgName, msgData, this));
+		}
 	}
 }

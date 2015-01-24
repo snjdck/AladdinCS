@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Aladdin.IOC;
+using UnityEngine;
 
 namespace Aladdin.MVC
 {
@@ -14,34 +13,47 @@ namespace Aladdin.MVC
 		[Inject]
 		private Injector injector;
 
-		private Dictionary<object, Mediator> mediatorRefs;
+		private readonly Dictionary<object, Mediator> mediatorRefs;
+
+		public View()
+		{
+			mediatorRefs = new Dictionary<object, Mediator>();
+		}
 
 		public void regMediator(Mediator mediator)
 		{
-			throw new NotImplementedException();
+			if(hasMediator(mediator)){
+				return;
+			}
+			mediatorRefs[mediator.go] = mediator;
+			mediator.onReg();
 		}
 
 		public void delMediator(Mediator mediator)
 		{
-			throw new NotImplementedException();
+			if(!hasMediator(mediator)) {
+				return;
+			}
+			mediatorRefs.Remove(mediator.go);
+			mediator.onDel();
 		}
 
 		public bool hasMediator(Mediator mediator)
 		{
-			throw new NotImplementedException();
+			return mediatorRefs.ContainsValue(mediator);
 		}
 
-		public void mapView()
+		public void mapView(GameObject go, Type mediatorType)
 		{
-			throw new NotImplementedException();
+			var mediator = Activator.CreateInstance(mediatorType, go) as Mediator;
+			injector.injectInto(mediator);
+			regMediator(mediator);
 		}
 
 		internal void notifyMediators(Msg msg)
 		{
-			foreach (var pair in mediatorRefs)
-			{
-				if (!msg.isProcessCanceled())
-				{
+			foreach(var pair in mediatorRefs){
+				if(!msg.isProcessCanceled()){
 					pair.Value.handleMsg(msg);
 				}
 			}

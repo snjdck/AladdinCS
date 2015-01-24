@@ -4,7 +4,7 @@ using Aladdin.IOC;
 
 namespace Aladdin.MVC
 {
-	sealed class Model
+	sealed class Model : IModel
 	{
 		[Inject]
 		private Module module;
