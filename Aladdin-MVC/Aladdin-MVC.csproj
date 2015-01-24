@@ -38,8 +38,6 @@
     <Compile Include="MVC\Application.cs" />
     <Compile Include="MVC\Controller\Command.cs" />
     <Compile Include="MVC\Controller\Controller.cs" />
-    <Compile Include="MVC\Kernel\IController.cs" />
-    <Compile Include="MVC\Kernel\IModel.cs" />
     <Compile Include="MVC\Kernel\INotifier.cs" />
     <Compile Include="MVC\Kernel\IView.cs" />
     <Compile Include="MVC\Model\Model.cs" />

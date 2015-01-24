@@ -3,13 +3,12 @@ using Aladdin.IOC;
 
 namespace Aladdin.MVC
 {
-	public class Command : INotifier
+	abstract public class Command : INotifier
 	{
-		[Inject]
-		protected Module module;
+		internal bool hasInject;
 
 		[Inject]
-		protected object msg;
+		protected Module module;
 
 		[Inject]
 		protected object contextView;
@@ -19,9 +18,6 @@ namespace Aladdin.MVC
 			//module.notifyImp();
 		}
 
-		public void exec()
-		{
-			
-		}
+		abstract public void exec(Msg msg);
 	}
 }

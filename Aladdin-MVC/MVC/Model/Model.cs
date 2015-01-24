@@ -4,7 +4,7 @@ using Aladdin.IOC;
 
 namespace Aladdin.MVC
 {
-	sealed class Model : IModel
+	sealed class Model
 	{
 		[Inject]
 		private Module module;
@@ -19,14 +19,30 @@ namespace Aladdin.MVC
 			proxyRefs = new Dictionary<Type, Proxy>();
 		}
 
-		public void regProxy(Type proxyType)
+		public void regProxy<T>() where T : Proxy, new()
 		{
-			throw new NotImplementedException();
+			Type proxyType = typeof(T);
+			if(hasProxy(proxyType)){
+				return;
+			}
+			Proxy proxy = injector.getInstance(proxyType) as Proxy;
+			if (null == proxy){
+				injector.mapSingleton<T>();
+				regProxy<T>();
+			}else{
+				proxyRefs[proxyType] = proxy;
+				proxy.onReg();
+			}
 		}
 
 		public void delProxy(Type proxyType)
 		{
-			throw new NotImplementedException();
+			if(!hasProxy(proxyType)){
+				return;
+			}
+			Proxy proxy = proxyRefs[proxyType];
+			proxyRefs.Remove(proxyType);
+			proxy.onDel();
 		}
 
 		public bool hasProxy(Type proxyType)

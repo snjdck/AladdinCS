@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Aladdin.MVC
 {
-	class Mediator
+	abstract public class Mediator
 	{
 		internal void handleMsg(Msg msg)
 		{

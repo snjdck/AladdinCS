@@ -10,7 +10,7 @@ namespace Aladdin.MVC
 		private bool processCanceledFlag;
 		private bool defaultPreventedFlag;
 
-		public Msg(Enum name, object data)
+		internal Msg(Enum name, object data, INotifier from)
 		{
 			this.name = name;
 			this.data = data;

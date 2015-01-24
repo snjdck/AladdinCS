@@ -1,12 +1,19 @@
 ﻿using System;
+using Aladdin.IOC;
 
 namespace Aladdin.MVC
 {
-	public class Proxy : INotifier
+	abstract public class Proxy : INotifier
 	{
-		public bool notify()
+		[Inject]
+		private Module module;
+
+		public bool notify(Enum msgName, object msgData = null)
 		{
-			throw new NotImplementedException();
+			module.notifyImpl(new Msg(msgName, msgData, this));
 		}
+
+		abstract protected internal void onReg();
+		abstract protected internal void onDel();
 	}
 }

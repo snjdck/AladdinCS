@@ -4,36 +4,40 @@ using Aladdin.IOC;
 
 namespace Aladdin.MVC
 {
-	class Controller : IController
+	sealed class Controller
 	{
 		[Inject]
 		private Injector injector;
 
-		private Dictionary<object, Command> cmdRefs;
+		private readonly Dictionary<string, Command> cmdRefs;
 
 		public Controller()
 		{
-			
+			cmdRefs = new Dictionary<string, Command>();
 		}
 
-		public void regCmd()
+		public void regCmd<T>(Enum msgName) where T : Command, new()
 		{
-			throw new NotImplementedException();
+			cmdRefs[msgName.GetFullName()] = new T();
 		}
 
-		public void delCmd()
+		public void delCmd(Enum msgName)
 		{
-			throw new NotImplementedException();
+			cmdRefs.Remove(msgName.GetFullName());
 		}
 
-		public bool hasCmd()
+		public bool hasCmd(Enum msgName)
 		{
-			throw new NotImplementedException();
+			return cmdRefs.ContainsKey(msgName.GetFullName());
 		}
 
-		public void execCmd()
+		public void execCmd(Msg msg)
 		{
-			throw new NotImplementedException();
+			if(msg.isProcessCanceled()){
+				return;
+			}
+			var cmd = cmdRefs[msg.name.GetFullName()];
+			cmd.exec(msg);
 		}
 	}
 }
