@@ -69,12 +69,24 @@ namespace Aladdin.IOC
 			return null;
 		}
 
+		public T getInstance<T>(string id = null) where T : class
+		{
+			return getInstance(typeof(T), id) as T;
+		}
+
 		public object newInstance(Type type)
 		{
 			var result = Activator.CreateInstance(type);
 			injectInto(result);
 			return result;
 		}
+
+	    public T newInstance<T>() where T : class, new()
+	    {
+		    var result = new T();
+			injectInto(result);
+		    return result;
+	    }
 
 		public void injectInto(object target)
 		{
