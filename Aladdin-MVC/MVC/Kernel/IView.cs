@@ -2,9 +2,9 @@
 {
 	interface IView
 	{
-		void regMediator();
-		void delMediator();
-		bool hasMediator();
+		void regMediator(Mediator mediator);
+		void delMediator(Mediator mediator);
+		bool hasMediator(Mediator mediator);
 
 		void mapView();
 	}

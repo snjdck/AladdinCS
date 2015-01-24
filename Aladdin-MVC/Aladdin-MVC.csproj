@@ -7,7 +7,7 @@
     <ProjectGuid>{67BF0B07-E07B-4425-9992-6F401AFBFD31}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Aladdin_MVC</RootNamespace>
+    <RootNamespace>Aladdin</RootNamespace>
     <AssemblyName>Aladdin-MVC</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -36,13 +36,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MVC\Application.cs" />
+    <Compile Include="MVC\Controller\Command.cs" />
+    <Compile Include="MVC\Controller\Controller.cs" />
     <Compile Include="MVC\Kernel\IController.cs" />
     <Compile Include="MVC\Kernel\IModel.cs" />
     <Compile Include="MVC\Kernel\INotifier.cs" />
     <Compile Include="MVC\Kernel\IView.cs" />
+    <Compile Include="MVC\Model\Model.cs" />
+    <Compile Include="MVC\Model\Proxy.cs" />
     <Compile Include="MVC\Module.cs" />
+    <Compile Include="MVC\Notification\Msg.cs" />
     <Compile Include="MVC\Service\ServiceInitializer.cs" />
     <Compile Include="MVC\Service\ServiceRegInfo.cs" />
+    <Compile Include="MVC\View\Mediator.cs" />
+    <Compile Include="MVC\View\View.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -50,12 +57,6 @@
       <Project>{50b69470-94cd-49f3-9b46-8e407833ccfa}</Project>
       <Name>Aladdin-IOC</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MVC\Controller\" />
-    <Folder Include="MVC\Model\" />
-    <Folder Include="MVC\Notification\" />
-    <Folder Include="MVC\View\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
