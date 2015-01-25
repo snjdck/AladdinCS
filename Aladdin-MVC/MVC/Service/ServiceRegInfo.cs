@@ -6,8 +6,8 @@ namespace Aladdin.MVC
 	sealed class ServiceRegInfo
 	{
 		internal Type serviceInterface;
-		internal Type serviceClass;
-		internal Injector moduleInjector;
+		Type serviceClass;
+		Injector moduleInjector;
 
 		internal Type[] typesNeedToBeInjected;
 
@@ -19,9 +19,10 @@ namespace Aladdin.MVC
 			typesNeedToBeInjected = Inject.GetTypesNeedInject(serviceClass);
 		}
 
-		public void regService(Injector appInjector)
+		public void regService()
 		{
 			var service = moduleInjector.newInstance(serviceClass);
+			var appInjector = moduleInjector.parent;
 			appInjector.mapValue(serviceInterface, service, null, false);
 		}
 	}

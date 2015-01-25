@@ -13,16 +13,16 @@ namespace Aladdin.MVC
 			serviceDefList = new List<ServiceRegInfo>();
 		}
 
-		public void regService(ServiceRegInfo serviceRegInfo)
+		public void regService(Type serviceInterface, Type serviceClass, Injector moduleInjector)
 		{
-			serviceDefList.Add(serviceRegInfo);
+			serviceDefList.Add(new ServiceRegInfo(serviceInterface, serviceClass, moduleInjector));
 		}
 
-		public void initialize(Injector appInjector)
+		public void initialize()
 		{
 			serviceDefList = resortList(serviceDefList);
-			foreach (var serviceRegInfo in serviceDefList){
-				serviceRegInfo.regService(appInjector);
+			foreach(var serviceRegInfo in serviceDefList){
+				serviceRegInfo.regService();
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace Aladdin.MVC
 		ServiceRegInfo findServiceRegInfo(List<ServiceRegInfo> list, Type serviceType)
 		{
 			foreach (var serviceRegInfo in list){
-				if (ReferenceEquals(serviceRegInfo.serviceClass, serviceType)){
+				if (ReferenceEquals(serviceRegInfo.serviceInterface, serviceType)){
 					return serviceRegInfo;
 				}
 			}
@@ -69,7 +69,7 @@ namespace Aladdin.MVC
 		{
 			List<string> printInfo = new List<string>();
 			foreach (var serviceRegInfo in serviceInFinding){
-				printInfo.Add(serviceRegInfo.serviceClass.FullName);
+				printInfo.Add(serviceRegInfo.serviceInterface.FullName);
 			}
 			throw new Exception(
 				string.Format(

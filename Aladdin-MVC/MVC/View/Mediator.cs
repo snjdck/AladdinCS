@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Aladdin.MVC
 {
 	abstract public class Mediator
 	{
-		private GameObject _go;
+		private object _viewComponent;
 		private Dictionary<string, Action<Msg>> handlerDict;
 
-		public Mediator(GameObject go)
+		public Mediator(object viewComponent)
 		{
-			this._go = go;
+			this._viewComponent = viewComponent;
 			handlerDict = new Dictionary<string, Action<Msg>>();
 		}
 
-		internal protected GameObject go
+		internal protected object viewComponent
 		{
-			get{ return _go; }
+			get { return _viewComponent; }
 		}
 
 		internal void handleMsg(Msg msg)

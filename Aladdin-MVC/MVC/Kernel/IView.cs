@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Aladdin.MVC
 {
@@ -8,7 +7,5 @@ namespace Aladdin.MVC
 		void regMediator(Mediator mediator);
 		void delMediator(Mediator mediator);
 		bool hasMediator(Mediator mediator);
-
-		void mapView(GameObject go, Type mediatorType);
 	}
 }

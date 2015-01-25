@@ -1,6 +1,5 @@
 ﻿using System;
 using Aladdin.IOC;
-using UnityEngine;
 
 namespace Aladdin.MVC
 {
@@ -101,11 +100,6 @@ namespace Aladdin.MVC
 		public bool hasMediator(Mediator mediator)
 		{
 			return view.hasMediator(mediator);
-		}
-
-		public void mapView(GameObject go, Type mediatorType)
-		{
-			view.mapView(go, mediatorType);
 		}
 	}
 }

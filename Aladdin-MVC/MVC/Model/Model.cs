@@ -7,9 +7,6 @@ namespace Aladdin.MVC
 	sealed class Model : IModel
 	{
 		[Inject]
-		private Module module;
-
-		[Inject]
 		private Injector injector;
 
 		private Dictionary<Type, Proxy> proxyRefs;

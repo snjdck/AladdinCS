@@ -8,10 +8,7 @@ namespace Aladdin.MVC
 		internal bool hasInject;
 
 		[Inject]
-		protected Module module;
-
-		[Inject]
-		protected object contextView;
+		private Module module;
 
 		abstract public void exec(Msg msg);
 

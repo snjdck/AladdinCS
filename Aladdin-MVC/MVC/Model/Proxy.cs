@@ -8,7 +8,7 @@ namespace Aladdin.MVC
 		[Inject]
 		private Module module;
 
-		public bool notify(Enum msgName, object msgData = null)
+		public bool notify(Enum msgName, object msgData=null)
 		{
 			return module.notifyImpl(new Msg(msgName, msgData, this));
 		}

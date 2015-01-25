@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Aladdin.IOC;
-using UnityEngine;
 
 namespace Aladdin.MVC
 {
 	sealed class View : IView
 	{
-		[Inject]
-		private Module module;
-
 		[Inject]
 		private Injector injector;
 
@@ -25,7 +21,8 @@ namespace Aladdin.MVC
 			if(hasMediator(mediator)){
 				return;
 			}
-			mediatorRefs[mediator.go] = mediator;
+			injector.injectInto(mediator);
+			mediatorRefs[mediator.viewComponent] = mediator;
 			mediator.onReg();
 		}
 
@@ -34,20 +31,13 @@ namespace Aladdin.MVC
 			if(!hasMediator(mediator)) {
 				return;
 			}
-			mediatorRefs.Remove(mediator.go);
+			mediatorRefs.Remove(mediator.viewComponent);
 			mediator.onDel();
 		}
 
 		public bool hasMediator(Mediator mediator)
 		{
 			return mediatorRefs.ContainsValue(mediator);
-		}
-
-		public void mapView(GameObject go, Type mediatorType)
-		{
-			var mediator = Activator.CreateInstance(mediatorType, go) as Mediator;
-			injector.injectInto(mediator);
-			regMediator(mediator);
 		}
 
 		internal void notifyMediators(Msg msg)
