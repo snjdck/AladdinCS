@@ -23,7 +23,7 @@ namespace Aladdin.MVC
 		{
 			var service = moduleInjector.newInstance(serviceClass);
 			var appInjector = moduleInjector.parent;
-			appInjector.mapValue(serviceInterface, service, null, false);
+			//appInjector.mapValue(serviceInterface, service, null, false);
 		}
 	}
 }

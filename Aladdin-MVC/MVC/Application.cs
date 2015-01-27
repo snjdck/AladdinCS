@@ -8,18 +8,17 @@ namespace Aladdin.MVC
 	{
 		private readonly Injector injector;
 		private readonly Dictionary<Type, Module> moduleDict;
-		private ServiceInitializer serviceInitializer;
+		private bool hasStartup;
 
 		public Application(Injector appInjector=null)
 		{
 			moduleDict = new Dictionary<Type, Module>();
-			serviceInitializer = new ServiceInitializer();
 			injector = appInjector ?? new Injector();
 		}
 
 		public void regModule(Type moduleType)
 		{
-			if(hasStartup) {
+			if(hasStartup){
 				throw new Exception("module should register before startup!");
 			}
 			if(moduleDict.ContainsKey(moduleType)){
@@ -35,16 +34,12 @@ namespace Aladdin.MVC
 			regModule(typeof(T));
 		}
 
-		internal void regService<K, V>(Injector moduleInjector=null) where K : class where V : K, new()
-		{
-			serviceInitializer.regService(typeof(K), typeof(V), moduleInjector);
-		}
-
 		public void startup()
 		{
 			if(hasStartup){
 				return;
 			}
+			hasStartup = true;
 			var moduleList = moduleDict.Values;
 			foreach(var module in moduleList){
 				module.initAllModels();
@@ -52,22 +47,15 @@ namespace Aladdin.MVC
 			foreach(var module in moduleList) {
 				module.initAllServices();
 			}
-			serviceInitializer.initialize();
 			foreach(var module in moduleList) {
 				module.initAllViews();
 			}
 			foreach(var module in moduleList) {
 				module.initAllControllers();
 			}
-			serviceInitializer = null;
 			foreach(var module in moduleList) {
 				module.onStartup();
 			}
-		}
-
-		bool hasStartup
-		{
-			get { return null == serviceInitializer; }
 		}
 	}
 }

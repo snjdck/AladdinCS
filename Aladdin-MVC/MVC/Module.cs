@@ -35,7 +35,7 @@ namespace Aladdin.MVC
 			if(asLocal){
 				injector.mapSingleton<K, V>();
 			}else{
-				application.regService<K, V>(injector);
+				injector.parent.mapSingleton<K, V>(null, injector);
 			}
 		}
 
