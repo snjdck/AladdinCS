@@ -1,24 +1,23 @@
 ﻿namespace Aladdin.IOC
 {
-    class InjectionTypeValue : IInjectionType
+	class InjectionTypeValue : IInjectionType
     {
-        bool needInject;
+		readonly Injector realInjector;
+		readonly bool needInject;
+		readonly object val;
 		bool hasInjected;
-		object val;
-		
-		public InjectionTypeValue(object val, bool needInject)
+
+		public InjectionTypeValue(object val, bool needInject, Injector realInjector)
 		{
+			this.realInjector = realInjector;
 			this.needInject = needInject;
 			this.val = val;
 		}
 
 		public object getValue(Injector injector, string id)
 		{
-			if(id != null){
-				return null;
-			}
 			if(needInject && !hasInjected){
-				injector.injectInto(val);
+				realInjector.injectInto(val);
 				hasInjected = true;
 			}
 			return val;

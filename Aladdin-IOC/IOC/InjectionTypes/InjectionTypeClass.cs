@@ -4,19 +4,18 @@ namespace Aladdin.IOC
 {
     class InjectionTypeClass : IInjectionType
     {
-        Type cls;
+		readonly Injector creator;
+		readonly Type cls;
 		
-		public InjectionTypeClass(Type cls)
+		public InjectionTypeClass(Injector creator, Type cls)
 		{
+			this.creator = creator;
 			this.cls = cls;
 		}
 
 		public object getValue(Injector injector, string id)
 		{
-			if(id != null){
-				return null;
-			}
-			return injector.newInstance(cls);
+			return creator.newInstance(cls);
 		}
     }
 }

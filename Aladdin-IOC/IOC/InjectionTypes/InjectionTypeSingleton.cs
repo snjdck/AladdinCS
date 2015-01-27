@@ -2,23 +2,22 @@
 
 namespace Aladdin.IOC
 {
-    class InjectionTypeSingleton : IInjectionType
+	class InjectionTypeSingleton : IInjectionType
     {
-        Type cls;
+		readonly Injector creator;
+		readonly Type cls;
 		object val;
 		
-		public InjectionTypeSingleton(Type cls)
+		public InjectionTypeSingleton(Injector creator, Type cls)
 		{
+			this.creator = creator;
 			this.cls = cls;
 		}
 
 		public object getValue(Injector injector, string id)
 		{
-			if(id != null){
-				return null;
-			}
 		    if(null == val){
-                val = injector.newInstance(cls);
+				val = creator.newInstance(cls);
 		    }
 		    return val;
 		}

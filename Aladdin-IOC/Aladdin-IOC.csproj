@@ -7,7 +7,7 @@
     <ProjectGuid>{50B69470-94CD-49F3-9B46-8E407833CCFA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Aladdin_IOC</RootNamespace>
+    <RootNamespace>Aladdin</RootNamespace>
     <AssemblyName>Aladdin-IOC</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

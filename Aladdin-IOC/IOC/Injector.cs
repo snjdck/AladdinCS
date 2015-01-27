@@ -13,47 +13,55 @@ namespace Aladdin.IOC
 		    dict = new Dictionary<string, IInjectionType>();
 	    }
 
-		public void mapValue<T>(T value, string id=null, bool needInject=true) where T : class
+		public void mapValue<T>(T value, string id = null, bool needInject = false, Injector realInjector = null) where T : class
 		{
-			mapValue(typeof(T), value, id, needInject);
+			var injectionType = new InjectionTypeValue(value, needInject, realInjector ?? this);
+			mapRule<T>(injectionType, id);
 		}
 
-		public void mapValue(Type keyType, object value, string id=null, bool needInject=true)
+		public void mapClass<K, V>(string id = null, Injector creator = null) where K : class where V : K, new()
 		{
-			mapRule(keyType, new InjectionTypeValue(value, needInject), id);
+			var injectionType = new InjectionTypeClass(creator ?? this, typeof(V));
+			mapRule<K>(injectionType, id);
 		}
 
-		public void mapClass<K, V>(string id=null) where K : class where V : K, new()
+		public void mapClass<T>(string id = null, Injector creator = null) where T : class, new()
 		{
-			mapRule(typeof(K), new InjectionTypeClass(typeof(V)), id);
+			mapClass<T, T>(id, creator);
 		}
 
-		public void mapClass<T>(string id = null) where T : class, new()
+		public void mapSingleton<K, V>(string id = null, Injector creator = null) where K : class where V : K, new()
 		{
-			mapClass<T, T>(id);
+			var injectionType = new InjectionTypeSingleton(creator ?? this, typeof(V));
+			mapRule<K>(injectionType, id);
 		}
 
-		public void mapSingleton<K, V>(string id=null) where K : class where V : K, new()
+		public void mapSingleton<T>(string id = null, Injector creator = null) where T : class, new()
 		{
-			mapRule(typeof(K), new InjectionTypeSingleton(typeof(V)), id);
+			mapSingleton<T, T>(id, creator);
 		}
 
-		public void mapSingleton<T>(string id=null) where T : class, new()
-		{
-			mapSingleton<T, T>(id);
-		}
-
-		public void mapRule(Type keyType, IInjectionType rule, string id=null)
+		public void mapRule(Type keyType, IInjectionType rule, string id = null)
 		{
 			dict.Add(getKey(keyType, id), rule);
 		}
 
-		public void unmap(Type keyType, string id=null)
+		public void mapRule<T>(IInjectionType rule, string id = null) where T : class
+		{
+			mapRule(typeof(T), rule, id);
+		}
+
+		public void unmap(Type keyType, string id = null)
 		{
 			dict.Remove(getKey(keyType, id));
 		}
 
-		public object getInstance(Type type, string id=null)
+		public void unmap<T>(string id = null) where T : class
+		{
+			unmap(typeof(T), id);
+		}
+
+		public object getInstance(Type type, string id = null)
 		{
 			IInjectionType injectionType = getInjectionType(getKey(type, id));
 
