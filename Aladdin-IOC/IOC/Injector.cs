@@ -13,12 +13,17 @@ namespace Aladdin.IOC
 		    dict = new Dictionary<string, IInjectionType>();
 	    }
 
-		public void mapValue<T>(T value, string id = null, bool needInject = false, Injector realInjector = null) where T : class
+		public void mapValue<T>(T value, string id = null, bool needInject = false) where T : class
 		{
-			var injectionType = new InjectionTypeValue(value, needInject, realInjector ?? this);
+			var injectionType = new InjectionTypeValue(value, needInject, this);
 			mapRule<T>(injectionType, id);
 		}
 
+		public void mapValue<T>(T value, string id, Injector realInjector) where T : class
+		{
+			var injectionType = new InjectionTypeValue(value, true, realInjector ?? this);
+			mapRule<T>(injectionType, id);
+		}
 		public void mapClass<K, V>(string id = null, Injector creator = null) where K : class where V : K, new()
 		{
 			var injectionType = new InjectionTypeClass(creator ?? this, typeof(V));
