@@ -5,8 +5,6 @@ namespace Aladdin.MVC
 {
 	abstract public class Command : INotifier
 	{
-		internal bool hasInject;
-
 		[Inject]
 		private Module module;
 

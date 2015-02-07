@@ -18,7 +18,7 @@ namespace Aladdin.MVC
 
 		public void regCmd<T>(Enum msgName) where T : Command, new()
 		{
-			cmdRefs[msgName.GetFullName()] = new T();
+			cmdRefs[msgName.GetFullName()] = injector.newInstance<T>();
 		}
 
 		public void delCmd(Enum msgName)
@@ -37,10 +37,6 @@ namespace Aladdin.MVC
 				return;
 			}
 			var cmd = cmdRefs[msg.name.GetFullName()];
-			if(!cmd.hasInject){
-				injector.injectInto(cmd);
-				cmd.hasInject = true;
-			}
 			cmd.exec(msg);
 		}
 	}
