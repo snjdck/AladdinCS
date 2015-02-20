@@ -103,7 +103,7 @@ namespace Aladdin.IOC
 
 		public void injectInto(object target)
 		{
-			IInjectionPoint injectionPoint = target.GetType().GetInjectionPoint();
+			var injectionPoint = target.GetType().GetInjectionPoint();
 			injectionPoint.injectInto(target, this);
 		}
 

@@ -5,17 +5,15 @@ namespace Aladdin.IOC
 	class InjectionPointField : IInjectionPoint
 	{
 		readonly FieldInfo field;
-		readonly Inject tag;
 
-		public InjectionPointField(FieldInfo field, Inject tag)
+		public InjectionPointField(FieldInfo field)
 		{
 			this.field = field;
-			this.tag = tag;
 		}
 
 		public void injectInto(object target, Injector injector)
 		{
-			var val = injector.getInstance(field.FieldType, tag.id);
+			var val = injector.getInstance(field.FieldType, field.GetInjectTag().id);
 			if(val != null) {
 				field.SetValue(target, val);
 			}

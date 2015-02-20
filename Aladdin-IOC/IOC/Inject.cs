@@ -6,11 +6,6 @@ namespace Aladdin.IOC
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public class Inject : Attribute
 	{
-		static public Type[] GetTypesNeedInject(Type type)
-		{
-			return type.GetInjectionPoint().getTypesNeedInject();
-		}
-
 		public string id;
 		
 		public Inject(string id=null)
